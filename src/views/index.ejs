@@ -4,5 +4,11 @@
     <a href="/profile">Profile</a>
 </div>  
 
+<% accounts.forEach(function(account){ %>
+    <%- include('summary.ejs', { account: accounts.savings } ) %>
+    <%- include('summary.ejs', { account: accounts.checking } ) %>
+    <%- include('summary.ejs', { account: accounts.credit } ) %>
+<% }); %>
+
 <a href="/transfer">Transfer</a>
 <%- include('footer.ejs') %>
