@@ -22,6 +22,20 @@ router.post("/payment", (req, res, next) => {
   });
 });
 
-module.exports = {
-  router,
-};
+// Transfer
+router.get("/transfer", (req, res, next) => {
+  res.render("transfer");
+});
+router.post("/transfer", (req, res, next) => {
+  // Calculate from figures.
+  const { from, to, amount } = req.body;
+  accounts[from].balance = parseInt(accounts[from].balance) - parseInt(amount);
+  accounts[to].balance = parseInt(accounts[to].balance) + parseInt(amount);
+
+  // Write the data to the accounts file.
+  writeJSON();
+
+  res.render("transfer", { message: "Transfer Completed" });
+});
+
+module.exports = router;
