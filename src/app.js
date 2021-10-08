@@ -1,8 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
-const { ap } = require("ramda");
 const app = express();
+const { router: servicesRoutes } = require("./routes/services");
+const { router: accountRoutes } = require("./routes/accounts");
 
 // Set the location of the views dir.
 app.set("views", path.join(__dirname, "views"));
@@ -20,30 +21,17 @@ app.get("/", (req, res, next) => {
     accounts: accounts,
   });
 });
-// Savings.
-app.get("/savings", (req, res, next) => {
-  res.render("account", {
-    account: accounts.savings,
-  });
-});
-// Checking.
-app.get("/checking", (req, res, next) => {
-  res.render("account", {
-    account: accounts.checking,
-  });
-});
-// Credit.
-app.get("/credit", (req, res, next) => {
-  res.render("account", {
-    account: accounts.credit,
-  });
-});
+
 // Profile route
 app.get("/profile", (req, res, next) => {
   res.render("profile", {
     user: users[0],
   });
 });
+
+app.use("/services", servicesRoutes);
+app.use("/account", accountRoutes);
+
 // Transfer
 app.get("/transfer", (req, res, next) => {
   res.render("transfer");
@@ -58,25 +46,6 @@ app.post("/transfer", (req, res, next) => {
   writeJSON();
 
   res.render("transfer", { message: "Transfer Completed" });
-});
-// Payment route.
-app.get("/payment", (req, res, next) => {
-  res.render("payment", { account: accounts.credit });
-});
-app.post("/payment", (req, res, next) => {
-  const { amount } = req.body;
-  accounts.credit.balance =
-    parseInt(accounts.credit.balance) - parseInt(amount);
-  accounts.credit.available =
-    parseInt(accounts.credit.available) + parseInt(amount);
-
-  // Write the data to the accounts file.
-  writeJSON();
-
-  res.render("payment", {
-    message: "Payment Successful",
-    account: accounts.credit,
-  });
 });
 
 app.listen(3000, () => {
